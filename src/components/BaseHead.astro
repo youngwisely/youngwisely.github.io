@@ -35,6 +35,25 @@ const fullTitle = title === SITE_TITLE ? title : `${title} · ${SITE_TITLE}`;
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL('og.png', Astro.site)} />
 
+<script type="application/ld+json" set:html={JSON.stringify({
+	'@context': 'https://schema.org',
+	'@type': 'Person',
+	name: 'Younghyun Oh',
+	url: 'https://youngwisely.github.io/',
+	image: 'https://youngwisely.github.io/photo.jpg',
+	jobTitle: 'Postdoctoral researcher',
+	affiliation: {
+		'@type': 'Organization',
+		name: 'Center for Neuroscience Imaging Research, Institute for Basic Science / Sungkyunkwan University',
+	},
+	sameAs: [
+		'https://orcid.org/0009-0000-1067-7793',
+		'https://scholar.google.com/citations?user=I0_2hEUAAAAJ',
+		'https://github.com/youngwisely',
+		'https://x.com/oh_younghyun',
+	],
+})} />
+
 <script is:inline>
 	const stored = localStorage.getItem('theme');
 	const theme = stored ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
