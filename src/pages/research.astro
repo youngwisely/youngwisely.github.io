@@ -1,0 +1,69 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const raw = (await getCollection('research')).sort((a, b) => a.data.order - b.data.order);
+const items = await Promise.all(
+	raw.map(async (r) => ({ data: r.data, Content: (await render(r)).Content }))
+);
+---
+
+<Base title="Research" description="Building a faithful in-silico reconstruction of the whole brain, to understand cognition in neurobiologically meaningful, mechanistic terms.">
+	<h1>Research</h1>
+
+	<div class="arc">
+		<p>
+			The core principle of my scientific practice is best encapsulated by Feynman's famous quote,
+			<em>“What I cannot create, I do not understand.”</em> This is why I study the brain with in-silico models.
+			With them I can simulate the brain, then cut some connections and poke some brain regions, none of
+			which is possible in the human brain. Once I obtain a circuit model of the brain with sufficient
+			alignment to the biological data, I can also make it a recurrent neural network (RNN) that solves
+			tasks, to see how the brain actually computes.
+		</p>
+		<p>
+			My aim goes beyond understanding the brain. We should then be able to know how to fix it when it
+			goes wrong. Psychopathology is a major societal problem and is becoming more so. Once we have a
+			faithful in-silico brain model, we should be able to understand the pathologies in more precise
+			terms: what circuits, dynamical properties, and regions underlie schizophrenia, bipolar disorder,
+			and autism.
+		</p>
+		<p>
+			This is a long journey, and its first chapter is already written. The hierarchy that I retrieved
+			from fMRI in the human brain ordered brain regions from the sensory and motor regions (the most
+			external) to the paralimbic regions (the most internal), which sit right above the limbic system
+			and the subcortex. This implies that the most important signals come from the regions that process
+			internal, bodily information. It is empirical evidence for a theoretical perspective (which I
+			co-led in an incredible team), grounded in cybernetics, on how to build artificial intelligence in
+			a life-like way, so that it behaves like us, with shared directions. There we proposed that internal
+			signals form the universal context for cognition (more below).
+		</p>
+	</div>
+
+	{
+		items.map(({ data, Content }) => (
+			<article class="entry research-entry">
+				<h2 class="research-title">{data.title}</h2>
+				<div class="research-body">
+					<Content />
+				</div>
+				{data.status && <p class="entry-meta">{data.status}</p>}
+				{data.links.length > 0 && (
+					<p class="links-inline">
+						{data.links.map((l) => (
+							<a href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
+								{l.label}
+							</a>
+						))}
+					</p>
+				)}
+			</article>
+		))
+	}
+</Base>
+
+<style>
+	.arc { margin-bottom: 2.4rem; }
+	.research-entry { margin-bottom: 2.6rem; }
+	.research-title { font-size: 1.2rem; margin-top: 2rem; }
+	.research-body :global(p) { margin: 0.4rem 0 0.5rem; }
+</style>

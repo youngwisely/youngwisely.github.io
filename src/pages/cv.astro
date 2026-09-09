@@ -1,0 +1,140 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { INTERESTS } from '../consts';
+
+const papers = (await getCollection('papers')).sort(
+	(a, b) => b.data.year - a.data.year || b.data.order - a.data.order
+);
+const talks = (await getCollection('talks')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const education = [
+	{ deg: 'Ph.D., Biomedical Engineering', org: 'Sungkyunkwan University (SKKU), South Korea', date: '2022–2026', note: 'Thesis: <em>Directed Signal-Flow Hierarchy and the Generative Architecture of Human Cortical Function</em>. Supervisor: Seok-Jun Hong. Degree awarded August 2026.' },
+	{ deg: 'M.Sc., Neuroscience', org: 'University of Bonn, Germany', date: '2018–2021', note: 'Thesis: <em>Neural mechanisms of the perception of aliveness across stimulus classes and visual characteristics</em>. Supervisor: Johannes Schultz.' },
+	{ deg: 'B.Sc., Biology', org: 'Chungnam National University, South Korea', date: '2012–2018', note: 'Studies interrupted by compulsory military service, 2013–2015 (Republic of Korea Marine Corps).' },
+];
+
+const experience = [
+	{ role: 'Postdoctoral researcher', org: 'Center for Neuroscience Imaging Research, Institute for Basic Science / SKKU', date: '2026–present', note: 'Combine Lab (PI Seok-Jun Hong).' },
+	{ role: 'Doctoral researcher', org: 'Center for Neuroscience Imaging Research, Institute for Basic Science / SKKU', date: '2022–2026', note: 'Combine Lab (PI Seok-Jun Hong). Directed connectivity hierarchy of the human cortex; differentiable whole-brain modeling; cross-species validation.' },
+	{ role: 'Research intern', org: 'Sungkyunkwan University', date: '2021–2022', note: 'Built a platform for inferring effective connectivity from fMRI.' },
+	{ role: "Master's researcher", org: 'Center for Economics and Neuroscience, University of Bonn', date: '2019–2021', note: 'PI Johannes Schultz.' },
+	{ role: 'Research intern', org: 'Korea Research Institute of Bioscience and Biotechnology (KRIBB)', date: '2016, 2017', note: '' },
+];
+
+const interests = INTERESTS;
+
+const awards = [
+	{ t: 'Doctoral graduate representative, Sungkyunkwan University commencement (representing the PhD graduates of science and engineering)', date: '2026' },
+	{ t: 'Merit Abstract Award, Organization for Human Brain Mapping (OHBM)', date: '2025' },
+	{ t: 'MSc Neurosciences Program Scholarship, University of Bonn', date: '2018–2019' },
+	{ t: 'Doosan Yonkang Foundation Scholarship (undergraduate)', date: '2016–2018' },
+];
+
+const supervision = [
+	{ t: 'M.Sc. student, Sungkyunkwan University', date: '2025–present', d: 'Day-to-day supervision: directed his initial implementation of the macaque biophysical-modelling pilot; training in literature review, neuroimaging analysis and computational modelling.' },
+];
+
+const skills = [
+	['Biophysical modelling', 'dynamic mean-field models, neural mass models, Hopf (Stuart–Landau) oscillator models'],
+	['Machine learning', 'differentiable whole-brain biophysical models, recurrent neural network training, task-optimised network models, partially observable Markov decision processes, variational inference, reinforcement learning'],
+	['Network modelling', 'dynamic causal modelling, Granger causality and vector autoregression, probabilistic graphical models, Bayesian network analysis, functional connectivity analysis'],
+	['Neuroimaging', 'fMRIPrep and HCP minimal preprocessing pipelines, Connectome Workbench, fMRI denoising pipelines, statistical analysis (SurfStat, task GLM analysis, HRF deconvolution)'],
+	['Programming', 'Python (JAX, NumPy/SciPy), MATLAB'],
+];
+---
+
+<Base title="CV" description="Curriculum vitae of Younghyun Oh.">
+	<div class="cv-head">
+		<h1>Curriculum Vitae</h1>
+		<a class="pdf-btn" href="/oh_cv.pdf" target="_blank" rel="noopener">Download PDF ↓</a>
+	</div>
+	<p class="muted">
+		Postdoctoral researcher, Center for Neuroscience Imaging Research (IBS), Sungkyunkwan University,
+		Suwon, South Korea.
+	</p>
+
+	<h2 class="section-label">Research interests</h2>
+	<p class="interests">{interests.join(' · ')}</p>
+
+	<h2 class="section-label">Education</h2>
+	{education.map((e) => (
+		<div class="entry cv-row">
+			<div><span class="entry-title">{e.deg}</span> — {e.org}{e.note && <p class="entry-sub" set:html={e.note} />}</div>
+			<div class="entry-meta date">{e.date}</div>
+		</div>
+	))}
+
+	<h2 class="section-label">Research experience</h2>
+	{experience.map((e) => (
+		<div class="entry cv-row">
+			<div><span class="entry-title">{e.role}</span> — {e.org}{e.note && <p class="entry-sub">{e.note}</p>}</div>
+			<div class="entry-meta date">{e.date}</div>
+		</div>
+	))}
+
+	<h2 class="section-label">Publications</h2>
+	{papers.map((p) => (
+		<article class="entry">
+			<div class="entry-sub" set:html={p.data.authors} />
+			<div class="entry-title cv-paper">{p.data.title}</div>
+			<div class="entry-meta"><em>{p.data.venue}</em>, {p.data.year}{p.data.status && <> · {p.data.status}</>}</div>
+		</article>
+	))}
+
+	<h2 class="section-label">Conference presentations</h2>
+	{talks.map((t) => (
+		<div class="entry">
+			<div class="entry-title cv-paper">{t.data.title}</div>
+			<div class="entry-meta">{t.data.type} · <em>{t.data.venue}</em>{t.data.location && <>, {t.data.location}</>} · {t.data.date.getFullYear()}{t.data.award && <> · {t.data.award}</>}</div>
+		</div>
+	))}
+
+	<h2 class="section-label">Supervision and mentoring</h2>
+	{supervision.map((s) => (
+		<div class="entry cv-row">
+			<div><span class="entry-title">{s.t}</span><p class="entry-sub">{s.d}</p></div>
+			<div class="entry-meta date">{s.date}</div>
+		</div>
+	))}
+
+	<h2 class="section-label">Awards &amp; honors</h2>
+	{awards.map((a) => (
+		<div class="entry cv-row">
+			<div class="entry-title">{a.t}</div>
+			<div class="entry-meta date">{a.date}</div>
+		</div>
+	))}
+
+	<h2 class="section-label">Professional memberships</h2>
+	<p>Organization for Human Brain Mapping (2022–present).</p>
+
+	<h2 class="section-label">Technical skills</h2>
+	<ul class="clean">
+		{skills.map(([k, v]) => (
+			<li class="entry"><span class="entry-title">{k}:</span> <span class="muted">{v}</span></li>
+		))}
+	</ul>
+</Base>
+
+<style>
+	.cv-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+	.pdf-btn {
+		font-family: var(--font-ui);
+		font-size: 0.85rem;
+		text-decoration: none;
+		border: 1px solid var(--accent);
+		color: var(--accent);
+		padding: 0.35rem 0.8rem;
+		border-radius: 6px;
+		white-space: nowrap;
+	}
+	.pdf-btn:hover { background: var(--accent-soft); }
+	.interests { font-size: 0.98rem; }
+	.cv-row { display: flex; justify-content: space-between; gap: 1.5rem; align-items: baseline; }
+	.cv-row .date { white-space: nowrap; }
+	.cv-paper { font-weight: 500; font-style: italic; }
+	.entry .entry-sub { margin-top: 0.15rem; }
+</style>

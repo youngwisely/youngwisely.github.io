@@ -1,0 +1,86 @@
+---
+import { SITE_TITLE, NAV } from '../consts';
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header class="topnav">
+	<div class="container bar">
+		<a href="/" class="brand">{SITE_TITLE}</a>
+		<nav aria-label="Site">
+			{
+				NAV.map((item) => (
+					<a href={item.href} class:list={['navlink', { active: isActive(item.href) }]}>
+						{item.label}
+					</a>
+				))
+			}
+			<button id="theme-toggle" type="button" aria-label="Toggle dark mode">
+				<svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"></path></svg>
+				<svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+			</button>
+		</nav>
+	</div>
+</header>
+
+<script>
+	const btn = document.getElementById('theme-toggle');
+	btn?.addEventListener('click', () => {
+		const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+		document.documentElement.dataset.theme = next;
+		localStorage.setItem('theme', next);
+	});
+</script>
+
+<style>
+	.topnav {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: color-mix(in srgb, var(--bg) 92%, transparent);
+		backdrop-filter: saturate(160%) blur(8px);
+		border-bottom: 1px solid var(--rule);
+	}
+	.bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 3.5rem;
+	}
+	.brand {
+		font-weight: 700;
+		font-size: 1.05rem;
+		letter-spacing: -0.01em;
+		color: var(--text);
+		text-decoration: none;
+	}
+	nav { display: flex; align-items: center; gap: 1.5rem; }
+	.navlink {
+		font-size: 0.95rem;
+		font-weight: 500;
+		color: var(--muted);
+		text-decoration: none;
+		padding: 0.2rem 0;
+		border-bottom: 2px solid transparent;
+	}
+	.navlink:hover { color: var(--text); }
+	.navlink.active { color: var(--text); border-bottom-color: var(--accent); }
+	#theme-toggle {
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: var(--muted);
+		display: inline-flex;
+		padding: 0.25rem;
+		margin-left: 0.2rem;
+	}
+	#theme-toggle:hover { color: var(--text); }
+	#theme-toggle .moon { display: none; }
+	:global([data-theme='dark']) #theme-toggle .sun { display: none; }
+	:global([data-theme='dark']) #theme-toggle .moon { display: inline; }
+	@media (max-width: 600px) {
+		.bar { height: auto; flex-wrap: wrap; gap: 0.3rem 1rem; padding-block: 0.7rem; }
+		nav { gap: 1rem; flex-wrap: wrap; }
+		.navlink { font-size: 0.9rem; }
+	}
+</style>

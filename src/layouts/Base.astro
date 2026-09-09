@@ -1,0 +1,42 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import TopNav from '../components/TopNav.astro';
+import Profile from '../components/Profile.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+	<body>
+		<TopNav />
+		<div class="container page">
+			<Profile />
+			<main>
+				<slot />
+			</main>
+		</div>
+		<footer class="container foot">
+			<span>© {year} Younghyun Oh</span>
+		</footer>
+		<script>
+			for (const a of document.querySelectorAll('a[href]')) {
+				const external = a.origin !== location.origin || a.pathname.endsWith('.pdf');
+				if (external) {
+					a.target = '_blank';
+					a.rel = 'noopener';
+				}
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,144 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { INTERESTS } from '../consts';
+
+// Selected work = the published papers, Nat Neurosci → NMI → Prog Neurobiol.
+const papers = (await getCollection('papers')).sort((a, b) => b.data.order - a.data.order);
+
+const news = [
+	{
+		when: 'September 2026',
+		text: 'My paper on the state-dependent signal flow hierarchy of the human cortex is out in <em>Nature Neuroscience</em>.',
+		href: 'https://rdcu.be/XEc2Cag7r3oa',
+	},
+	{
+		when: 'August 2026',
+		text: 'My paper on life-inspired interoceptive AI is out in <em>Nature Machine Intelligence</em>.',
+		href: 'https://rdcu.be/4GShKoXodYqa',
+	},
+	{
+		when: 'August 2026',
+		text: 'PhD awarded. I represented the doctoral graduates of science and engineering at the commencement, and continue in the Combine Lab as a postdoctoral researcher from September.',
+	},
+	{
+		when: 'May 2025',
+		text: 'My abstract “Intrinsic effective connectivity as the basis of functional specialization” received a Merit Abstract Award from the Organization for Human Brain Mapping. I presented it as a talk at OHBM 2025 in Brisbane in June.',
+		href: 'https://youtu.be/z9CDtl5DQdw',
+		label: 'Watch',
+	},
+];
+---
+
+<Base>
+	<h1 class="section-label">About me</h1>
+	<p>
+		I am a computational neuroscientist working on building a model of the brain. My aim is to
+		understand the brain by building it. I use biophysical circuit models to simulate neuroimaging
+		data, investigate the simulated brain signals using dynamical systems theory, and compare the model
+		parameters to biological features to see how well the model captures the biology.
+	</p>
+	<p>
+		My working hypothesis is that the brain is a hierarchically organized complex system. The idea is
+		described vividly in Herbert Simon's seminal essay, <a href="https://www.jstor.org/stable/985254" target="_blank" rel="noopener"><em>“The Architecture of Complexity”</em></a> (1962).
+		Simon wrote that <em>“in the face of complexity, an in-principle reductionist may be at the same time
+		a pragmatic holist.”</em> Neurons and synapses are real, and yet the brain is best understood at the
+		level of the whole. He went on to name the form that this organization most often takes:
+		<em>“Hierarchy, I shall argue, is one of the central structural schemes that the architect of
+		complexity uses.”</em> That is why I study hierarchy over its alternatives, whether a heterarchy
+		with no fixed ranking among regions or a parallel distributed system with no ranking at all, and
+		why I build my circuit models at the scale of the whole brain.
+	</p>
+	<p>
+		There are many forms of hierarchy (see <a href="https://doi.org/10.1098/rstb.2019.0319" target="_blank" rel="noopener">Hilgetag and Goulas, 2020</a>,
+		a very nice review of the types of hierarchies in the brain). For a complex system that needs
+		regulation and information processing, the most important aspect of hierarchy in the brain is how
+		information flows between brain regions. This form of hierarchy has traditionally been studied in
+		animals with invasive tools, such as injecting a virus into a living brain and letting it spread
+		throughout the brain (which is very unethical). Thus, in humans, the hierarchical organization has
+		long been conjectured but never formally shown. In my PhD I showed that a cortical hierarchy can be
+		recovered non-invasively from fMRI. This hierarchy is the ordering of brain regions by the net
+		influence between them, hence the term “signal-flow hierarchy.”
+	</p>
+	<p>
+		My current work focuses on how this hierarchy enables flexible computation in the brain. One may
+		investigate this at the synapse level, since synapses can be modulated at the speed of thought.
+		However, the overall scaffold of the brain that connects the regions, allowing global communication
+		and coordination (which is what I hypothesize to underlie cognition), cannot change that fast. It
+		changes over days and months, and stays quite stable once a human becomes an adult. My hypothesis is
+		that the signal-flow hierarchy provides different routes for signals to travel along (owing to the
+		different types of projections across the hierarchy), and that neuromodulation of brain regions
+		along the hierarchy sets which routes are on and off.
+	</p>
+	<p>
+		To learn more about my research, the <a href="/research">Research</a> page tells the longer story.
+	</p>
+
+	<h2 class="section-label">Current position and background</h2>
+	<ul>
+		<li>
+			Postdoctoral researcher, <a href="https://www.combinelab.net/" target="_blank" rel="noopener">Combine Lab</a> (PI
+			Seok-Jun Hong), Center for Neuroscience Imaging Research, Institute for Basic Science, and
+			Sungkyunkwan University, Suwon, South Korea
+		</li>
+		<li>
+			I completed my PhD in biomedical engineering at Sungkyunkwan University in 2026, supervised by
+			Seok-Jun Hong. Before that I trained in neuroscience at the University of Bonn and in biology at
+			Chungnam National University.
+		</li>
+	</ul>
+
+	<h2 class="section-label">Research interests</h2>
+	<ul>
+		{INTERESTS.map((i) => <li>{i}</li>)}
+	</ul>
+
+	<h2 class="section-label">News</h2>
+	<ul class="clean news">
+		{
+			news.map((n) => (
+				<li class="news-item">
+					<span class="news-when">{n.when}</span>
+					<span class="news-text">
+						<span set:html={n.text} />
+						{n.href && <> <a href={n.href} target="_blank" rel="noopener">{n.label ?? 'Read'}</a></>}
+					</span>
+				</li>
+			))
+		}
+	</ul>
+
+	<h2 class="section-label">Selected publications</h2>
+	{
+		papers.map((p) => (
+			<article class="entry">
+				<div class="entry-title">{p.data.title}</div>
+				<div class="entry-sub" set:html={p.data.authors} />
+				<div class="entry-meta"><em>{p.data.venue}</em>, {p.data.year}</div>
+				<p class="links-inline">
+					{p.data.links.map((l) => (
+						<a href={l.href} target="_blank" rel="noopener">{l.label}</a>
+					))}
+					{p.data.paperurl && (
+						<a href={p.data.paperurl} target="_blank" rel="noopener">Publisher</a>
+					)}
+				</p>
+			</article>
+		))
+	}
+	<p class="small"><a href="/publications">All publications</a></p>
+</Base>
+
+<style>
+	.news-item {
+		display: grid;
+		grid-template-columns: 9rem 1fr;
+		gap: 1rem;
+		margin-bottom: 0.7rem;
+	}
+	.news-when { font-size: 0.88rem; color: var(--muted); padding-top: 0.15rem; }
+	.news-text a { font-size: 0.88rem; }
+	@media (max-width: 540px) {
+		.news-item { grid-template-columns: 1fr; gap: 0.1rem; }
+	}
+</style>

@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const talks = (await getCollection('talks')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<Base title="Talks" description="Talks and conference presentations by Younghyun Oh.">
+	<h1>Talks &amp; presentations</h1>
+
+	{
+		talks.map((t) => (
+			<article class="entry">
+				<div class="entry-title">{t.data.title}</div>
+				<div class="entry-meta">
+					{t.data.type} · <em>{t.data.venue}</em>
+					{t.data.location && <>, {t.data.location}</>} · {t.data.date.getFullYear()}
+				</div>
+				{t.data.authors && <div class="entry-sub small muted">{t.data.authors}</div>}
+				{(t.data.video || t.data.award) && (
+					<p class="links-inline">
+						{t.data.video && (
+							<a href={t.data.video} target="_blank" rel="noopener">Watch</a>
+						)}
+						{t.data.award && <span class="tag">{t.data.award}</span>}
+					</p>
+				)}
+			</article>
+		))
+	}
+</Base>
